@@ -1,4 +1,4 @@
-import { DIR_DELTA, type Cell, type Direction, type LevelDef } from "../types";
+import { DIR_DELTA, type Cell, type Direction, type LevelDef, type PathDef } from "../types";
 
 export function cellKey(row: number, col: number): string {
   return `${row},${col}`;
@@ -19,8 +19,23 @@ export interface EscapeResult {
   steps: number;
 }
 
-export function buildOccupied(level: LevelDef, excludePathIndex?: number): Set<string> {
+export function buildWallSet(level: LevelDef): Set<string> {
   const set = new Set<string>();
+  for (const w of level.walls ?? []) {
+    set.add(cellKey(w.row, w.col));
+  }
+  return set;
+}
+
+export function buildOccupied(
+  level: LevelDef,
+  excludePathIndex?: number,
+  extraBlocked?: ReadonlySet<string>,
+): Set<string> {
+  const set = new Set<string>(extraBlocked);
+  for (const w of level.walls ?? []) {
+    set.add(cellKey(w.row, w.col));
+  }
   level.paths.forEach((path, i) => {
     if (i === excludePathIndex) return;
     for (const c of path.cells) {
@@ -28,6 +43,20 @@ export function buildOccupied(level: LevelDef, excludePathIndex?: number): Set<s
     }
   });
   return set;
+}
+
+export function clearedPathCount(initialCount: number, remaining: number): number {
+  return initialCount - remaining;
+}
+
+export function isPathLocked(
+  pathDef: PathDef,
+  initialPathCount: number,
+  remainingPathCount: number,
+): boolean {
+  const need = pathDef.requiresClear ?? 0;
+  if (need <= 0) return false;
+  return clearedPathCount(initialPathCount, remainingPathCount) < need;
 }
 
 /**
@@ -64,30 +93,4 @@ export function checkPathEscape(
   }
 
   return { canEscape: false, steps: 0 };
-}
-
-/** Squared distance from point to segment */
-export function distToSegment(
-  px: number,
-  py: number,
-  x1: number,
-  y1: number,
-  x2: number,
-  y2: number,
-): number {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const lenSq = dx * dx + dy * dy;
-  if (lenSq === 0) {
-    const ddx = px - x1;
-    const ddy = py - y1;
-    return ddx * ddx + ddy * ddy;
-  }
-  let t = ((px - x1) * dx + (py - y1) * dy) / lenSq;
-  t = Math.max(0, Math.min(1, t));
-  const cx = x1 + t * dx;
-  const cy = y1 + t * dy;
-  const ddx = px - cx;
-  const ddy = py - cy;
-  return ddx * ddx + ddy * ddy;
 }

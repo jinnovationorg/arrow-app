@@ -3,18 +3,14 @@ import { getHeadDir } from "./pathGrid";
 import type { Cell, Direction } from "../types";
 import { DIR_DELTA } from "../types";
 
-type PathStyle = "normal" | "blocked" | "hint";
+type PathStyle = "normal" | "blocked" | "hint" | "locked";
+
+const PATH_PALETTE = [0x1a1a1a, 0x2563eb, 0x059669, 0xd97706, 0x7c3aed, 0xdb2777];
 
 /** Shaft thickness & head size relative to cell */
 const SHAFT_RATIO = 0.17;
 const HEAD_WIDTH_RATIO = 1.55;
 const HEAD_LENGTH_RATIO = 2.6;
-
-const STYLE = {
-  normal: { color: 0x1a1a1a, widthMul: 1, headMul: 1 },
-  blocked: { color: 0xdc2626, widthMul: 1.15, headMul: 1.2 },
-  hint: { color: 0x4f46e5, widthMul: 1, headMul: 1.08 },
-} as const;
 
 export class PathPiece extends Phaser.GameObjects.Container {
   readonly pathIndex: number;
@@ -24,6 +20,8 @@ export class PathPiece extends Phaser.GameObjects.Container {
   private boardX: number;
   private boardY: number;
   private style: PathStyle = "normal";
+  private baseColor: number;
+  locked = false;
 
   constructor(
     scene: Phaser.Scene,
@@ -32,6 +30,7 @@ export class PathPiece extends Phaser.GameObjects.Container {
     cellSize: number,
     boardX: number,
     boardY: number,
+    colorHex?: string,
   ) {
     super(scene, 0, 0);
     this.pathIndex = pathIndex;
@@ -39,6 +38,7 @@ export class PathPiece extends Phaser.GameObjects.Container {
     this.cellSize = cellSize;
     this.boardX = boardX;
     this.boardY = boardY;
+    this.baseColor = colorHex ? parseInt(colorHex.replace("#", ""), 16) : PATH_PALETTE[pathIndex % PATH_PALETTE.length]!;
 
     this.gfx = scene.add.graphics();
     this.add(this.gfx);
@@ -57,18 +57,44 @@ export class PathPiece extends Phaser.GameObjects.Container {
   }
 
   setBlockedLook(blocked: boolean) {
-    this.setStyle(blocked ? "blocked" : "normal");
+    if (blocked) {
+      this.setStyle("blocked");
+    } else {
+      this.setStyle(this.locked ? "locked" : "normal");
+    }
   }
 
   setHintLook(active: boolean) {
     if (this.style === "blocked") return;
-    this.setStyle(active ? "hint" : "normal");
+    this.setStyle(active ? "hint" : this.locked ? "locked" : "normal");
+  }
+
+  setLockedLook(locked: boolean) {
+    this.locked = locked;
+    if (this.style !== "blocked" && this.style !== "hint") {
+      this.setStyle(locked ? "locked" : "normal");
+    } else if (!locked && this.style === "locked") {
+      this.setStyle("normal");
+    }
   }
 
   private setStyle(style: PathStyle) {
     if (this.style === style) return;
     this.style = style;
     this.redraw();
+  }
+
+  private styleParams(): { color: number; widthMul: number; headMul: number; alpha: number } {
+    switch (this.style) {
+      case "blocked":
+        return { color: 0xdc2626, widthMul: 1.15, headMul: 1.2, alpha: 1 };
+      case "hint":
+        return { color: 0x4f46e5, widthMul: 1, headMul: 1.08, alpha: 1 };
+      case "locked":
+        return { color: this.baseColor, widthMul: 0.95, headMul: 0.95, alpha: 0.45 };
+      default:
+        return { color: this.baseColor, widthMul: 1, headMul: 1, alpha: 1 };
+    }
   }
 
   private toWorld(row: number, col: number) {
@@ -86,8 +112,9 @@ export class PathPiece extends Phaser.GameObjects.Container {
     y2: number,
     half: number,
     color: number,
+    alpha: number,
   ) {
-    g.fillStyle(color, 1);
+    g.fillStyle(color, alpha);
     if (Math.abs(x2 - x1) < 0.5) {
       const top = Math.min(y1, y2) - half;
       const h = Math.abs(y2 - y1) + half * 2;
@@ -99,7 +126,6 @@ export class PathPiece extends Phaser.GameObjects.Container {
     }
   }
 
-  /** Flat cap at the tail — shows where the path starts */
   private drawTailCap(
     g: Phaser.GameObjects.Graphics,
     tx: number,
@@ -107,12 +133,13 @@ export class PathPiece extends Phaser.GameObjects.Container {
     dir: Direction,
     half: number,
     color: number,
+    alpha: number,
   ) {
     const { dr, dc } = DIR_DELTA[dir];
     const px = -dr;
     const py = dc;
     const cap = half * 0.85;
-    g.fillStyle(color, 1);
+    g.fillStyle(color, alpha);
     g.fillTriangle(
       tx - dc * cap,
       ty - dr * cap,
@@ -126,11 +153,10 @@ export class PathPiece extends Phaser.GameObjects.Container {
   redraw() {
     const g = this.gfx;
     const cs = this.cellSize;
-    const s = STYLE[this.style];
-    const color = s.color;
-    const shaftHalf = Math.max(5, cs * SHAFT_RATIO) * s.widthMul;
-    const headHalf = shaftHalf * HEAD_WIDTH_RATIO * s.headMul;
-    const headLen = shaftHalf * HEAD_LENGTH_RATIO * s.headMul;
+    const { color, widthMul, headMul, alpha } = this.styleParams();
+    const shaftHalf = Math.max(5, cs * SHAFT_RATIO) * widthMul;
+    const headHalf = shaftHalf * HEAD_WIDTH_RATIO * headMul;
+    const headLen = shaftHalf * HEAD_LENGTH_RATIO * headMul;
 
     g.clear();
     if (this.cells.length === 0) return;
@@ -143,8 +169,9 @@ export class PathPiece extends Phaser.GameObjects.Container {
       const p = pts[0]!;
       const neck = { x: p.x - dc * headLen, y: p.y - dr * headLen };
       if (this.style === "blocked") this.drawErrorMarker(g, p.x, p.y, headHalf);
-      this.drawThickBar(g, neck.x, neck.y, p.x - dc * shaftHalf * 0.3, p.y - dr * shaftHalf * 0.3, shaftHalf, color);
-      this.drawArrowHead(g, neck.x, neck.y, dir, headHalf, headLen, color);
+      if (this.style === "locked") this.drawLockMarker(g, p.x, p.y, headHalf);
+      this.drawThickBar(g, neck.x, neck.y, p.x - dc * shaftHalf * 0.3, p.y - dr * shaftHalf * 0.3, shaftHalf, color, alpha);
+      this.drawArrowHead(g, neck.x, neck.y, dir, headHalf, headLen, color, alpha);
       return;
     }
 
@@ -158,25 +185,21 @@ export class PathPiece extends Phaser.GameObjects.Container {
     if (this.style === "blocked") {
       this.drawErrorMarker(g, head.x, head.y, headHalf);
     }
+    if (this.style === "locked") {
+      this.drawLockMarker(g, head.x, head.y, headHalf);
+    }
 
-    // Tail cap (blunt end — direction is toward the head)
-    this.drawTailCap(g, tail.x, tail.y, dir, shaftHalf, color);
+    this.drawTailCap(g, tail.x, tail.y, dir, shaftHalf, color, alpha);
 
-    // Shaft through every bend, ending at arrow base
     for (let i = 1; i < pts.length; i++) {
       const a = pts[i - 1]!;
       const b = i === pts.length - 1 ? neck : pts[i]!;
-      this.drawThickBar(g, a.x, a.y, b.x, b.y, shaftHalf, color);
+      this.drawThickBar(g, a.x, a.y, b.x, b.y, shaftHalf, color, alpha);
     }
 
-    // Pointed head (wider + longer than shaft — clear “going →” look)
-    this.drawArrowHead(g, neck.x, neck.y, dir, headHalf, headLen, color);
+    this.drawArrowHead(g, neck.x, neck.y, dir, headHalf, headLen, color, alpha);
   }
 
-  /**
-   * Arrowhead: base at (bx,by), tip extends `headLen` pixels in `dir`.
-   * `headHalf` = half-width of base (wider than shaft).
-   */
   private drawArrowHead(
     g: Phaser.GameObjects.Graphics,
     bx: number,
@@ -185,6 +208,7 @@ export class PathPiece extends Phaser.GameObjects.Container {
     headHalf: number,
     headLen: number,
     color: number,
+    alpha: number,
   ) {
     const { dr, dc } = DIR_DELTA[dir];
     const px = -dr;
@@ -194,7 +218,7 @@ export class PathPiece extends Phaser.GameObjects.Container {
     const left = { x: bx + px * headHalf, y: by + py * headHalf };
     const right = { x: bx - px * headHalf, y: by - py * headHalf };
 
-    g.fillStyle(color, 1);
+    g.fillStyle(color, alpha);
     g.fillTriangle(tip.x, tip.y, left.x, left.y, right.x, right.y);
   }
 
@@ -209,6 +233,20 @@ export class PathPiece extends Phaser.GameObjects.Container {
     g.lineStyle(3, 0xffffff, 1);
     g.lineBetween(hx - x, hy - x, hx + x, hy + x);
     g.lineBetween(hx - x, hy + x, hx + x, hy - x);
+  }
+
+  private drawLockMarker(g: Phaser.GameObjects.Graphics, hx: number, hy: number, half: number) {
+    const r = half * 1.6;
+    g.fillStyle(0xfef3c7, 0.9);
+    g.fillCircle(hx, hy, r);
+    g.lineStyle(2, 0xd97706, 1);
+    g.strokeCircle(hx, hy, r);
+    const w = r * 0.55;
+    const h = r * 0.45;
+    g.fillStyle(0xd97706, 1);
+    g.fillRoundedRect(hx - w, hy - h * 0.2, w * 2, h, 3);
+    g.lineStyle(2.5, 0xd97706, 1);
+    g.strokeCircle(hx, hy - h * 0.55, w * 0.7);
   }
 
   hitTest(wx: number, wy: number, threshold: number): boolean {
