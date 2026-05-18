@@ -1,3 +1,4 @@
+import { ADVANCED_LEVELS } from "./levelsAdvanced";
 import type { Cell, LevelDef, PathDef } from "./types";
 
 function path(
@@ -146,9 +147,9 @@ export const LEVELS: LevelDef[] = [
     6,
     [
       path([[0, 0], [0, 1], [1, 1], [1, 2]]),
-      path([[5, 5], [5, 4], [4, 4]], { color: "#059669" }),
-      path([[1, 5], [2, 5], [3, 5], [4, 5], [5, 5]], { color: "#d97706", requiresClear: 1 }),
-      path([[0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3]], { color: "#7c3aed", requiresClear: 2 }),
+      path([[5, 4], [5, 3], [5, 2]], { color: "#059669" }),
+      path([[1, 5], [2, 5], [3, 5], [4, 5]], { color: "#d97706", requiresClear: 1 }),
+      path([[0, 3], [1, 3], [2, 3], [3, 3], [4, 3]], { color: "#7c3aed", requiresClear: 2 }),
     ],
     { name: "Chain unlock", par: 4 },
   ),
@@ -239,6 +240,7 @@ export const LEVELS: LevelDef[] = [
       walls: wall([1, 1], [1, 6], [6, 1], [6, 6]),
     },
   ),
+  ...ADVANCED_LEVELS,
 ];
 
 export const STORAGE_KEY = "arrows-puzzle-level";
