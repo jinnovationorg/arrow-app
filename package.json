@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "icons": "node scripts/generate-icons.mjs",
+    "build-levels": "npx tsx scripts/build-campaign-levels.ts",
     "validate-levels": "npx tsx scripts/validate-levels.ts",
     "test": "npx tsx scripts/test-game.ts",
     "cap:sync": "npm run build && npx cap sync",

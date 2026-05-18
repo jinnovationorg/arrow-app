@@ -18,6 +18,20 @@ function cellKey(r: number, c: number) {
   return `${r},${c}`;
 }
 
+function fingerprint(level: LevelDef): string {
+  const parts = level.paths.map((p) => p.cells.map((c) => `${c.row},${c.col}`).join("|"));
+  const walls = (level.walls ?? []).map((w) => `${w.row},${w.col}`).sort().join("|");
+  return `${level.rows}x${level.cols}#${parts.join(";")}#${walls}`;
+}
+
+function measureComplexity(level: LevelDef): number {
+  const cells = level.paths.reduce((s, p) => s + p.cells.length, 0);
+  const locked = level.paths.filter((p) => (p.requiresClear ?? 0) > 0).length;
+  const walls = level.walls?.length ?? 0;
+  const maxLen = Math.max(...level.paths.map((p) => p.cells.length), 1);
+  return level.paths.length * 10 + cells * 3 + walls * 5 + locked * 15 + level.rows * 4 + maxLen * 4;
+}
+
 function isOrthogonal(a: Cell, b: Cell): boolean {
   const dr = Math.abs(a.row - b.row);
   const dc = Math.abs(a.col - b.col);
@@ -173,17 +187,27 @@ if (LEVELS.length !== 50) {
   pass(`50 levels loaded`);
 }
 
-// 2. Difficulty curve (26+ should generally grow in complexity)
-console.log("\n2. Difficulty curve (levels 26–50)");
+// 2. Strictly increasing complexity + unique layouts
+console.log("\n2. Complexity curve & uniqueness");
+const fps = new Set<string>();
 let curveOk = true;
-for (let i = 25; i < LEVELS.length; i++) {
-  const n = LEVELS[i]!.paths.length;
-  if (n < 2) {
-    fail(`Level ${i + 1} has only ${n} paths`);
+let prevScore = 0;
+for (let i = 0; i < LEVELS.length; i++) {
+  const level = LEVELS[i]!;
+  const score = measureComplexity(level);
+  if (score <= prevScore) {
+    fail(`Level ${i + 1}: complexity ${score} did not exceed ${prevScore}`);
     curveOk = false;
   }
+  prevScore = score;
+  const fp = fingerprint(level);
+  if (fps.has(fp)) {
+    fail(`Level ${i + 1}: duplicate layout fingerprint`);
+    curveOk = false;
+  }
+  fps.add(fp);
 }
-if (curveOk) pass("Advanced levels have valid path counts");
+if (curveOk) pass("Complexity rises every level; all 50 layouts unique");
 
 // 3. Structure validation
 console.log("\n3. Structure validation");
@@ -242,19 +266,12 @@ if (solutionOrders.length === LEVELS.length) {
   pass(`All ${LEVELS.length} levels solvable with snake-slide simulation`);
 }
 
-// 5. Spot-check known fixes
-console.log("\n5. Regression checks");
-const hub = LEVELS[23]!;
-if (hub.name !== "Hub") fail("Level 24 should be Hub");
-else pass("Level 24 is Hub");
-
-const master = LEVELS[24]!;
-if (master.name !== "Master") fail("Level 25 should be Master");
-else pass("Level 25 is Master");
-
-const infinity = LEVELS[49]!;
-if (!infinity.name?.includes("Infinity")) fail("Level 50 should be Infinity");
-else pass(`Level 50 is ${infinity.name}`);
+// 5. Campaign bookends
+console.log("\n5. Campaign bookends");
+if (LEVELS[0]!.name !== "Awakening") fail("Level 1 should be Awakening");
+else pass("Level 1 is Awakening");
+if (LEVELS[49]!.name !== "Infinity") fail("Level 50 should be Infinity");
+else pass("Level 50 is Infinity");
 
 // 6. Every level has at least one initially movable OR unlockable path
 console.log("\n6. Initial mobility");
