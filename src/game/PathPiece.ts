@@ -71,11 +71,8 @@ export class PathPiece extends Phaser.GameObjects.Container {
 
   setLockedLook(locked: boolean) {
     this.locked = locked;
-    if (this.style !== "blocked" && this.style !== "hint") {
-      this.setStyle(locked ? "locked" : "normal");
-    } else if (!locked && this.style === "locked") {
-      this.setStyle("normal");
-    }
+    if (this.style === "blocked" || this.style === "hint") return;
+    this.setStyle(locked ? "locked" : "normal");
   }
 
   private setStyle(style: PathStyle) {

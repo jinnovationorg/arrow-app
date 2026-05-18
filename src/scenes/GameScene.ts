@@ -97,7 +97,7 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setInteractive({ useHandCursor: true });
 
-    this.levelsBtn.on("pointerdown", (_p, _x, _y, ev?: Event) => {
+    this.levelsBtn.on("pointerdown", (_p: Phaser.Input.Pointer, _x: number, _y: number, ev?: Event) => {
       ev?.stopPropagation();
       this.showLevelSelect();
     });
@@ -114,7 +114,7 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setInteractive({ useHandCursor: true });
 
-    this.hintText.on("pointerdown", (_p, _x, _y, ev?: Event) => {
+    this.hintText.on("pointerdown", (_p: Phaser.Input.Pointer, _x: number, _y: number, ev?: Event) => {
       ev?.stopPropagation();
       this.showHint();
     });
@@ -131,7 +131,7 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setInteractive({ useHandCursor: true });
 
-    this.undoText.on("pointerdown", (_p, _x, _y, ev?: Event) => {
+    this.undoText.on("pointerdown", (_p: Phaser.Input.Pointer, _x: number, _y: number, ev?: Event) => {
       ev?.stopPropagation();
       this.undoMove();
     });
@@ -142,7 +142,7 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setInteractive({ useHandCursor: true });
 
-    this.restartBtn.on("pointerdown", (_p, _x, _y, ev?: Event) => {
+    this.restartBtn.on("pointerdown", (_p: Phaser.Input.Pointer, _x: number, _y: number, ev?: Event) => {
       ev?.stopPropagation();
       this.loadLevel(this.levelIndex);
     });
@@ -734,7 +734,7 @@ export class GameScene extends Phaser.Scene {
       buttons.forEach((b) => b.destroy());
     };
 
-    LEVELS.forEach((lvl, i) => {
+    LEVELS.forEach((_lvl, i) => {
       const col = i % cols;
       const row = Math.floor(i / cols);
       const stars = this.getStars(i);
