@@ -204,11 +204,11 @@ export class GameScene extends Phaser.Scene {
       sessionStorage.setItem("arrows-tutorial", "1");
       this.showToast("Tap a path to slide it off the board", 3200);
     }
-    if (index === 8 && !sessionStorage.getItem("arrows-walls-tutorial")) {
+    if (index === 15 && !sessionStorage.getItem("arrows-walls-tutorial")) {
       sessionStorage.setItem("arrows-walls-tutorial", "1");
       this.showToast("Gray blocks are walls — paths cannot pass through them", 3500);
     }
-    if (index === 16 && !sessionStorage.getItem("arrows-lock-tutorial")) {
+    if (index === 18 && !sessionStorage.getItem("arrows-lock-tutorial")) {
       sessionStorage.setItem("arrows-lock-tutorial", "1");
       this.showToast("Locked paths unlock after you clear others first", 3500);
     }

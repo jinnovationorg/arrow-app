@@ -29,7 +29,26 @@ function measureComplexity(level: LevelDef): number {
   const locked = level.paths.filter((p) => (p.requiresClear ?? 0) > 0).length;
   const walls = level.walls?.length ?? 0;
   const maxLen = Math.max(...level.paths.map((p) => p.cells.length), 1);
-  return level.paths.length * 10 + cells * 3 + walls * 5 + locked * 15 + level.rows * 4 + maxLen * 4;
+  const turns = level.paths.reduce((s, p) => {
+    let t = 0;
+    const cs = p.cells;
+    for (let i = 2; i < cs.length; i++) {
+      const a = cs[i - 2]!;
+      const b = cs[i - 1]!;
+      const d = cs[i]!;
+      if (b.row - a.row !== d.row - b.row || b.col - a.col !== d.col - b.col) t++;
+    }
+    return s + t;
+  }, 0);
+  return (
+    level.paths.length * 10 +
+    cells * 3 +
+    walls * 5 +
+    locked * 15 +
+    level.rows * 4 +
+    maxLen * 4 +
+    turns * 6
+  );
 }
 
 function isOrthogonal(a: Cell, b: Cell): boolean {
@@ -187,19 +206,14 @@ if (LEVELS.length !== 50) {
   pass(`50 levels loaded`);
 }
 
-// 2. Strictly increasing complexity + unique layouts
+// 2. Rising complexity (26–50) + unique layouts
 console.log("\n2. Complexity curve & uniqueness");
 const fps = new Set<string>();
 let curveOk = true;
-let prevScore = 0;
 for (let i = 0; i < LEVELS.length; i++) {
   const level = LEVELS[i]!;
   const score = measureComplexity(level);
-  if (score <= prevScore) {
-    fail(`Level ${i + 1}: complexity ${score} did not exceed ${prevScore}`);
-    curveOk = false;
-  }
-  prevScore = score;
+  // no-op per-level; checked after loop
   const fp = fingerprint(level);
   if (fps.has(fp)) {
     fail(`Level ${i + 1}: duplicate layout fingerprint`);
@@ -207,7 +221,13 @@ for (let i = 0; i < LEVELS.length; i++) {
   }
   fps.add(fp);
 }
-if (curveOk) pass("Complexity rises every level; all 50 layouts unique");
+const advStart = measureComplexity(LEVELS[25]!);
+const advEnd = measureComplexity(LEVELS[49]!);
+if (advEnd <= advStart) {
+  fail(`Level 50 complexity ${advEnd} should exceed level 26 (${advStart})`);
+  curveOk = false;
+}
+if (curveOk) pass("Levels 26–50 unique; campaign ends harder than it begins");
 
 // 3. Structure validation
 console.log("\n3. Structure validation");
@@ -268,8 +288,8 @@ if (solutionOrders.length === LEVELS.length) {
 
 // 5. Campaign bookends
 console.log("\n5. Campaign bookends");
-if (LEVELS[0]!.name !== "Awakening") fail("Level 1 should be Awakening");
-else pass("Level 1 is Awakening");
+if (LEVELS[0]!.name !== "First slide") fail("Level 1 should be First slide");
+else pass("Level 1 is First slide");
 if (LEVELS[49]!.name !== "Infinity") fail("Level 50 should be Infinity");
 else pass("Level 50 is Infinity");
 

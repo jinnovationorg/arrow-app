@@ -1,13 +1,13 @@
-import type { Cell, LevelDef, PathDef } from "./types";
+/**
+ * Handcrafted levels 26–50 — curved paths, rising difficulty.
+ */
+import type { Cell, LevelDef, PathDef } from "../src/types";
 
 function path(
   cells: [number, number][],
   opts?: { color?: string; requiresClear?: number },
 ): PathDef {
-  return {
-    cells: cells.map(([row, col]) => ({ row, col })),
-    ...opts,
-  };
+  return { cells: cells.map(([row, col]) => ({ row, col })), ...opts };
 }
 
 function wall(...cells: [number, number][]): Cell[] {
@@ -23,251 +23,7 @@ function level(
   return { rows, cols, paths, ...opts };
 }
 
-/** 50 campaign levels — handcrafted 1–25, curved puzzles 26–50 */
-export const LEVELS: LevelDef[] = [
-  level(
-    3,
-    3,
-    [
-      path([[1, 0], [1, 1], [1, 2]]),
-    ],
-    { name: "First slide", par: 1 },
-  ),
-  level(
-    3,
-    4,
-    [
-      path([[0, 0], [0, 1]]),
-      path([[2, 0], [2, 1], [2, 2]], { color: "#2563eb" }),
-    ],
-    { name: "Two lanes", par: 2 },
-  ),
-  level(
-    3,
-    4,
-    [
-      path([[0, 0], [0, 1], [1, 1], [1, 2]]),
-    ],
-    { name: "Corner", par: 1 },
-  ),
-  level(
-    4,
-    4,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[2, 0], [2, 1], [2, 2]], { color: "#059669" }),
-    ],
-    { name: "Parallel", par: 2 },
-  ),
-  level(
-    5,
-    5,
-    [
-      path([[0, 0], [0, 1], [0, 2], [0, 3]]),
-      path([[2, 0], [2, 1], [2, 2], [2, 3]], { color: "#d97706" }),
-    ],
-    { name: "Long pair", par: 2 },
-  ),
-  level(
-    5,
-    5,
-    [
-      path([[0, 1], [1, 1], [2, 1], [2, 0]]),
-      path([[0, 3], [1, 3], [1, 2]], { color: "#7c3aed" }),
-    ],
-    { name: "L shapes", par: 2 },
-  ),
-  level(
-    5,
-    5,
-    [
-      path([[1, 0], [1, 1], [1, 2], [0, 2]]),
-      path([[3, 0], [3, 1], [3, 2], [3, 3]], { color: "#db2777" }),
-    ],
-    { name: "Hooked", par: 2 },
-  ),
-  level(
-    6,
-    6,
-    [
-      path([[0, 0], [0, 1], [0, 2], [1, 2], [2, 2]]),
-      path([[4, 0], [4, 1], [4, 2]], { color: "#2563eb" }),
-      path([[2, 4], [3, 4], [4, 4]], { color: "#059669" }),
-    ],
-    { name: "Three-way", par: 3 },
-  ),
-  level(
-    6,
-    6,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3]]),
-      path([[3, 1], [3, 2], [2, 2], [2, 1], [2, 0]], { color: "#d97706" }),
-    ],
-    { name: "Crossing", par: 2 },
-  ),
-  level(
-    6,
-    6,
-    [
-      path([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]),
-      path([[0, 2], [0, 1], [1, 1], [1, 2]], { color: "#7c3aed" }),
-      path([[4, 0], [4, 1], [4, 2], [3, 2]], { color: "#db2777" }),
-    ],
-    { name: "Weave", par: 3 },
-  ),
-  level(
-    7,
-    7,
-    [
-      path([[0, 0], [0, 1], [0, 2], [0, 3]]),
-      path([[6, 0], [6, 1], [6, 2], [6, 3]], { color: "#2563eb" }),
-    ],
-    { name: "Bookends", par: 2 },
-  ),
-  level(
-    7,
-    7,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[3, 3], [3, 4], [3, 5], [3, 6]], { color: "#059669" }),
-      path([[6, 6], [6, 5], [6, 4], [6, 3]], { color: "#d97706" }),
-    ],
-    { name: "Diagonal trio", par: 3 },
-  ),
-  level(
-    7,
-    7,
-    [
-      path([[0, 2], [1, 2], [2, 2], [2, 1], [2, 0], [1, 0]]),
-      path([[4, 2], [4, 3], [4, 4], [3, 4], [2, 4]], { color: "#7c3aed" }),
-      path([[6, 0], [6, 1], [5, 1]], { color: "#db2777" }),
-    ],
-    { name: "Serpentine", par: 3 },
-  ),
-  level(
-    8,
-    8,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [3, 2], [3, 1]]),
-      path([[1, 5], [2, 5], [3, 5], [3, 6], [3, 7]], { color: "#2563eb" }),
-      path([[5, 1], [5, 2], [5, 3], [4, 3]], { color: "#059669" }),
-    ],
-    { name: "Triple ring", par: 3 },
-  ),
-  level(
-    8,
-    8,
-    [
-      path([[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 1], [2, 0]]),
-      path([[0, 4], [1, 4], [2, 4], [2, 5], [2, 6], [1, 6], [0, 6]], { color: "#d97706" }),
-      path([[4, 0], [5, 0], [6, 0], [6, 1], [6, 2]], { color: "#7c3aed" }),
-      path([[4, 6], [5, 6], [6, 6], [6, 5], [6, 4], [5, 4], [4, 4]], { color: "#db2777" }),
-    ],
-    { name: "Four corners", par: 4 },
-  ),
-  level(
-    5,
-    5,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[4, 2], [4, 1], [4, 0]], { color: "#2563eb" }),
-    ],
-    { name: "Wall gap", par: 2, walls: wall([2, 2], [2, 1], [2, 3]) },
-  ),
-  level(
-    6,
-    6,
-    [
-      path([[0, 0], [1, 0], [2, 0]]),
-      path([[5, 5], [4, 5], [3, 5]], { color: "#2563eb" }),
-      path([[0, 5], [0, 4], [0, 3]], { color: "#059669" }),
-    ],
-    { name: "Maze pillars", par: 3, walls: wall([2, 2], [3, 2], [2, 3]) },
-  ),
-  level(
-    5,
-    5,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[4, 0], [4, 1], [4, 2]], { color: "#2563eb" }),
-    ],
-    { name: "Cross wall", par: 2, walls: wall([2, 0], [2, 1], [2, 2]) },
-  ),
-  level(
-    5,
-    5,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[4, 0], [4, 1], [4, 2]], { color: "#2563eb" }),
-      path([[2, 0], [2, 1], [2, 2], [2, 3], [2, 4]], { color: "#db2777", requiresClear: 2 }),
-    ],
-    { name: "Key path", par: 3 },
-  ),
-  level(
-    6,
-    6,
-    [
-      path([[0, 0], [0, 1], [1, 1], [1, 2]]),
-      path([[5, 5], [5, 4], [4, 4]], { color: "#059669" }),
-      path([[1, 5], [2, 5], [3, 5], [4, 5]], { color: "#d97706", requiresClear: 1 }),
-      path([[0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3]], { color: "#7c3aed", requiresClear: 2 }),
-    ],
-    { name: "Chain unlock", par: 4 },
-  ),
-  level(
-    7,
-    7,
-    [
-      path([[0, 0], [0, 1], [0, 2], [0, 3]]),
-      path([[6, 3], [6, 2], [6, 1], [6, 0]], { color: "#2563eb" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6]], { color: "#db2777", requiresClear: 2 }),
-    ],
-    { name: "Fortress", par: 3, walls: wall([1, 3], [2, 3], [4, 3], [5, 3], [3, 1], [3, 2], [3, 4], [3, 5]) },
-  ),
-  level(
-    7,
-    7,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[6, 0], [6, 1], [6, 2]], { color: "#2563eb" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6]], { color: "#db2777", requiresClear: 2 }),
-    ],
-    { name: "Grand lock", par: 3, walls: wall([1, 3], [2, 3], [4, 3], [5, 3]) },
-  ),
-  level(
-    8,
-    8,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [3, 2], [3, 1], [2, 1]]),
-      path([[1, 5], [2, 5], [3, 5], [3, 6], [3, 7], [2, 7], [1, 7], [1, 6]], { color: "#2563eb" }),
-      path([[5, 1], [5, 2], [5, 3], [6, 3], [7, 3], [7, 2], [7, 1], [6, 1]], { color: "#059669" }),
-      path([[5, 5], [5, 6], [5, 7], [6, 7], [7, 7], [7, 6], [7, 5], [6, 5]], { color: "#d97706" }),
-    ],
-    { name: "Four spirals", par: 4, walls: wall([4, 4], [4, 3], [3, 4]) },
-  ),
-  level(
-    6,
-    6,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[5, 0], [5, 1], [5, 2]], { color: "#059669" }),
-      path([[5, 3], [5, 4], [5, 5]], { color: "#d97706" }),
-    ],
-    { name: "Hub", par: 4, walls: wall([2, 2], [3, 3]) },
-  ),
-  level(
-    8,
-    8,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[7, 0], [7, 1], [7, 2]], { color: "#059669" }),
-      path([[7, 3], [7, 4], [7, 5]], { color: "#d97706" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5]], { color: "#db2777", requiresClear: 2 }),
-    ],
-    { name: "Master", par: 5, walls: wall([1, 1], [1, 6], [6, 1], [6, 6]) },
-  ),
+export const CURATED_ADVANCED: LevelDef[] = [
   level(
     8,
     8,
@@ -391,7 +147,10 @@ export const LEVELS: LevelDef[] = [
       path([[9, 0], [9, 1], [9, 2], [9, 3]], { color: "#2563eb" }),
       path([[0, 6], [0, 7], [0, 8], [0, 9]], { color: "#059669" }),
       path([[9, 6], [9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7]], { color: "#db2777", requiresClear: 2 }),
+      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7]], {
+        color: "#db2777",
+        requiresClear: 2,
+      }),
     ],
     { name: "Spine key", par: 5, walls: wall([2, 4], [4, 4], [6, 4], [5, 3], [5, 5]) },
   ),
@@ -403,7 +162,10 @@ export const LEVELS: LevelDef[] = [
       path([[9, 0], [9, 1], [9, 2]], { color: "#2563eb" }),
       path([[0, 7], [0, 8], [0, 9]], { color: "#059669" }),
       path([[9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]], { color: "#db2777", requiresClear: 2 }),
+      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]], {
+        color: "#db2777",
+        requiresClear: 2,
+      }),
     ],
     { name: "Wide chain", par: 5 },
   ),
@@ -426,7 +188,10 @@ export const LEVELS: LevelDef[] = [
       path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
       path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
       path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5]], { color: "#db2777", requiresClear: 2 }),
+      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5]], {
+        color: "#db2777",
+        requiresClear: 2,
+      }),
     ],
     { name: "Deep vault", par: 5, walls: wall([1, 2], [1, 4], [8, 2], [8, 4], [5, 2], [5, 4]) },
   ),
@@ -474,7 +239,10 @@ export const LEVELS: LevelDef[] = [
       path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
       path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
       path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7], [3, 8], [3, 9]], { color: "#db2777", requiresClear: 3 }),
+      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7], [3, 8], [3, 9]], {
+        color: "#db2777",
+        requiresClear: 3,
+      }),
     ],
     { name: "Grand hall", par: 7, walls: wall([5, 2], [5, 7], [6, 4], [6, 5]) },
   ),
@@ -512,7 +280,10 @@ export const LEVELS: LevelDef[] = [
       path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
       path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
       path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4]], { color: "#db2777", requiresClear: 3 }),
+      path([[2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4]], {
+        color: "#db2777",
+        requiresClear: 3,
+      }),
     ],
     { name: "Royal gate", par: 7, walls: wall([1, 6], [8, 6], [4, 2], [5, 2]) },
   ),
@@ -551,7 +322,10 @@ export const LEVELS: LevelDef[] = [
       path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
       path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
       path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]], { color: "#db2777", requiresClear: 2 }),
+      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]], {
+        color: "#db2777",
+        requiresClear: 2,
+      }),
     ],
     { name: "Penultimate", par: 7, walls: wall([5, 2], [5, 7]) },
   ),
@@ -565,12 +339,19 @@ export const LEVELS: LevelDef[] = [
       path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
       path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
       path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7], [2, 8], [2, 9]], { color: "#db2777", requiresClear: 3 }),
-      path([[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8], [7, 9]], { color: "#e11d48", requiresClear: 4 }),
+      path([[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7], [2, 8], [2, 9]], {
+        color: "#db2777",
+        requiresClear: 3,
+      }),
+      path([[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8], [7, 9]], {
+        color: "#e11d48",
+        requiresClear: 4,
+      }),
     ],
-    { name: "Infinity", par: 8, walls: wall([1, 1], [1, 8], [8, 1], [8, 8], [4, 4], [5, 5]) },
+    {
+      name: "Infinity",
+      par: 8,
+      walls: wall([1, 1], [1, 8], [8, 1], [8, 8], [4, 4], [5, 5]),
+    },
   ),
 ];
-
-export const STORAGE_KEY = "arrows-puzzle-level";
-export const STARS_KEY = "arrows-puzzle-stars";
