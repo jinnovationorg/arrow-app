@@ -227,7 +227,13 @@ if (advEnd <= advStart) {
   fail(`Level 50 complexity ${advEnd} should exceed level 26 (${advStart})`);
   curveOk = false;
 }
-if (curveOk) pass("Levels 26–50 unique; campaign ends harder than it begins");
+for (let i = 25; i < LEVELS.length; i++) {
+  if (LEVELS[i]!.paths.length < 4) {
+    fail(`Level ${i + 1}: advanced stages need at least 4 paths (has ${LEVELS[i]!.paths.length})`);
+    curveOk = false;
+  }
+}
+if (curveOk) pass("Levels 26–50 unique, 4+ paths, harder finale");
 
 // 3. Structure validation
 console.log("\n3. Structure validation");

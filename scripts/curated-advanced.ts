@@ -1,357 +1,47 @@
 /**
- * Handcrafted levels 26–50 — curved paths, rising difficulty.
+ * Levels 26–50 — scaled from proven solvable puzzles; difficulty rises via grid size + template tier.
  */
 import type { Cell, LevelDef, PathDef } from "../src/types";
+import { HANDCRAFTED_LEVELS } from "./handcrafted-base";
 
-function path(
-  cells: [number, number][],
-  opts?: { color?: string; requiresClear?: number },
-): PathDef {
-  return { cells: cells.map(([row, col]) => ({ row, col })), ...opts };
-}
-
-function wall(...cells: [number, number][]): Cell[] {
-  return cells.map(([row, col]) => ({ row, col }));
-}
-
-function level(
-  rows: number,
-  cols: number,
-  paths: PathDef[],
-  opts?: { walls?: Cell[]; name?: string; par?: number },
-): LevelDef {
-  return { rows, cols, paths, ...opts };
-}
-
-export const CURATED_ADVANCED: LevelDef[] = [
-  level(
-    8,
-    8,
-    [
-      path([[0, 0], [0, 1], [1, 1], [1, 2]]),
-      path([[0, 5], [0, 6], [1, 6], [1, 7]], { color: "#2563eb" }),
-      path([[5, 0], [6, 0], [6, 1], [7, 1]]),
-      path([[6, 5], [6, 6], [7, 6], [7, 7]], { color: "#d97706" }),
-    ],
-    { name: "Horizon", par: 4 },
-  ),
-  level(
-    8,
-    8,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3]]),
-      path([[1, 5], [2, 5], [3, 5], [3, 6], [3, 7]], { color: "#2563eb" }),
-      path([[5, 1], [5, 2], [5, 3], [4, 3], [4, 2]], { color: "#059669" }),
-      path([[5, 5], [5, 6], [6, 6], [7, 6], [7, 5]], { color: "#d97706" }),
-      path([[0, 0], [1, 0], [2, 0], [2, 1]], { color: "#7c3aed" }),
-    ],
-    { name: "Braid", par: 5 },
-  ),
-  level(
-    9,
-    9,
-    [
-      path([[0, 2], [1, 2], [2, 2], [2, 1], [2, 0], [1, 0]]),
-      path([[6, 2], [6, 3], [6, 4], [5, 4], [4, 4]], { color: "#2563eb" }),
-      path([[0, 6], [0, 7], [1, 7], [2, 7], [2, 6]], { color: "#059669" }),
-      path([[6, 6], [7, 6], [7, 7], [7, 8], [6, 8]], { color: "#d97706" }),
-    ],
-    { name: "Coil", par: 4 },
-  ),
-  level(
-    9,
-    9,
-    [
-      path([[0, 0], [0, 1], [1, 1], [2, 1], [2, 2], [2, 3]]),
-      path([[0, 6], [1, 6], [2, 6], [2, 7], [2, 8]], { color: "#2563eb" }),
-      path([[6, 0], [7, 0], [7, 1], [7, 2], [6, 2]]),
-      path([[6, 6], [6, 7], [7, 7], [8, 7], [8, 6]], { color: "#059669" }),
-      path([[4, 4], [4, 5], [5, 5], [5, 4]], { color: "#7c3aed" }),
-    ],
-    { name: "Crosshair", par: 5, walls: wall([4, 3], [3, 4]) },
-  ),
-  level(
-    9,
-    9,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 6], [0, 7], [0, 8]], { color: "#2563eb" }),
-      path([[8, 0], [8, 1], [8, 2]], { color: "#059669" }),
-      path([[8, 6], [8, 7], [8, 8]], { color: "#d97706" }),
-      path([[4, 0], [4, 1], [4, 2], [4, 3]], { color: "#7c3aed" }),
-    ],
-    { name: "Stairwell", par: 5, walls: wall([3, 4], [5, 4]) },
-  ),
-  level(
-    9,
-    9,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [3, 2], [3, 1]]),
-      path([[1, 5], [2, 5], [3, 5], [3, 6], [3, 7]], { color: "#2563eb" }),
-      path([[5, 1], [5, 2], [5, 3], [4, 3]], { color: "#059669" }),
-      path([[5, 5], [6, 5], [7, 5], [7, 6], [7, 7]], { color: "#d97706" }),
-    ],
-    { name: "Rampart", par: 4, walls: wall([4, 4], [4, 3], [3, 4]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 7], [0, 8], [0, 9]], { color: "#2563eb" }),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
-      path([[9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-      path([[1, 1], [1, 2], [2, 2], [2, 1]]),
-    ],
-    { name: "Outpost", par: 5, walls: wall([3, 5], [5, 3], [6, 6]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 2], [1, 2], [2, 2], [2, 1], [2, 0]]),
-      path([[0, 7], [1, 7], [2, 7], [2, 8], [2, 9]], { color: "#2563eb" }),
-      path([[7, 2], [8, 2], [9, 2], [9, 1], [9, 0]], { color: "#059669" }),
-      path([[7, 7], [8, 7], [9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4]], { color: "#7c3aed" }),
-      path([[5, 5], [5, 6], [5, 7], [5, 8], [5, 9]], { color: "#db2777" }),
-    ],
-    { name: "Split keep", par: 6, walls: wall([3, 4], [6, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2], [1, 2]]),
-      path([[0, 5], [0, 6], [0, 7], [1, 7], [2, 7], [2, 6]], { color: "#2563eb" }),
-      path([[5, 0], [6, 0], [7, 0], [7, 1], [7, 2], [6, 2]], { color: "#059669" }),
-      path([[5, 5], [6, 5], [7, 5], [7, 6], [7, 7], [6, 7]], { color: "#d97706" }),
-    ],
-    { name: "Channel", par: 4, walls: wall([4, 4], [4, 5], [5, 4]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [3, 2], [3, 1], [2, 1]]),
-      path([[1, 6], [2, 6], [3, 6], [3, 7], [3, 8], [2, 8], [1, 8], [1, 7]], { color: "#2563eb" }),
-      path([[6, 1], [6, 2], [6, 3], [7, 3], [8, 3], [8, 2], [8, 1], [7, 1]], { color: "#059669" }),
-    ],
-    { name: "Inner ring", par: 3, walls: wall([5, 5], [4, 5], [5, 4]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2], [0, 3]]),
-      path([[9, 0], [9, 1], [9, 2], [9, 3]], { color: "#2563eb" }),
-      path([[0, 6], [0, 7], [0, 8], [0, 9]], { color: "#059669" }),
-      path([[9, 6], [9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7]], {
-        color: "#db2777",
-        requiresClear: 2,
-      }),
-    ],
-    { name: "Spine key", par: 5, walls: wall([2, 4], [4, 4], [6, 4], [5, 3], [5, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#2563eb" }),
-      path([[0, 7], [0, 8], [0, 9]], { color: "#059669" }),
-      path([[9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]], {
-        color: "#db2777",
-        requiresClear: 2,
-      }),
-    ],
-    { name: "Wide chain", par: 5 },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]),
-      path([[7, 0], [8, 0], [9, 0], [9, 1], [9, 2]], { color: "#2563eb" }),
-      path([[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]], { color: "#059669" }),
-      path([[7, 7], [8, 7], [9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-    ],
-    { name: "Outer keep", par: 4, walls: wall([4, 4], [4, 5], [5, 4], [5, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
-      path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5]], {
-        color: "#db2777",
-        requiresClear: 2,
-      }),
-    ],
-    { name: "Deep vault", par: 5, walls: wall([1, 2], [1, 4], [8, 2], [8, 4], [5, 2], [5, 4]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [3, 2], [3, 1], [2, 1]]),
-      path([[1, 6], [2, 6], [3, 6], [3, 7], [3, 8], [2, 8], [1, 8], [1, 7]], { color: "#2563eb" }),
-      path([[6, 1], [6, 2], [6, 3], [7, 3], [8, 3], [8, 2], [8, 1], [7, 1]], { color: "#059669" }),
-      path([[6, 6], [6, 7], [6, 8], [7, 8], [8, 8], [8, 7], [8, 6], [7, 6]], { color: "#d97706" }),
-    ],
-    { name: "Citadel", par: 4, walls: wall([5, 4], [4, 5], [5, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 1], [2, 0]]),
-      path([[0, 7], [0, 8], [0, 9], [1, 9], [2, 9], [2, 8], [2, 7]], { color: "#2563eb" }),
-      path([[7, 0], [8, 0], [9, 0], [9, 1], [9, 2], [8, 2], [7, 2]], { color: "#059669" }),
-      path([[7, 7], [8, 7], [9, 7], [9, 8], [9, 9], [8, 9], [7, 9]], { color: "#d97706" }),
-    ],
-    { name: "Grand spiral", par: 4, walls: wall([4, 4], [5, 4], [4, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2], [1, 2], [0, 2]]),
-      path([[0, 7], [1, 7], [2, 7], [2, 8], [2, 9], [1, 9], [0, 9]], { color: "#2563eb" }),
-      path([[7, 0], [8, 0], [9, 0], [9, 1], [9, 2], [8, 2], [7, 2]], { color: "#059669" }),
-      path([[7, 7], [8, 7], [9, 7], [9, 8], [9, 9], [8, 9], [7, 9]], { color: "#d97706" }),
-      path([[4, 4], [4, 5], [5, 5], [5, 4]], { color: "#7c3aed" }),
-    ],
-    { name: "Grand cross", par: 5, walls: wall([3, 4], [6, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
-      path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
-      path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
-      path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5], [3, 6], [3, 7], [3, 8], [3, 9]], {
-        color: "#db2777",
-        requiresClear: 3,
-      }),
-    ],
-    { name: "Grand hall", par: 7, walls: wall([5, 2], [5, 7], [6, 4], [6, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[1, 1], [1, 2], [1, 3], [2, 3], [3, 3], [3, 2], [3, 1], [2, 1]]),
-      path([[1, 6], [2, 6], [3, 6], [3, 7], [3, 8], [2, 8], [1, 8], [1, 7]], { color: "#2563eb" }),
-      path([[6, 1], [6, 2], [6, 3], [7, 3], [8, 3], [8, 2], [8, 1], [7, 1]], { color: "#059669" }),
-      path([[6, 6], [6, 7], [6, 8], [7, 8], [8, 8], [8, 7], [8, 6], [7, 6]], { color: "#d97706" }),
-    ],
-    { name: "Mega ring", par: 4, walls: wall([5, 4], [4, 5], [5, 5], [6, 4]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [1, 0], [2, 0], [2, 1], [2, 2]]),
-      path([[7, 0], [8, 0], [9, 0], [9, 1], [9, 2]], { color: "#2563eb" }),
-      path([[0, 7], [0, 8], [0, 9], [1, 9], [2, 9]], { color: "#059669" }),
-      path([[7, 7], [8, 7], [9, 7], [9, 8], [9, 9]], { color: "#d97706" }),
-      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4]], { color: "#7c3aed", requiresClear: 1 }),
-      path([[5, 5], [5, 6], [5, 7], [5, 8], [5, 9]], { color: "#db2777", requiresClear: 2 }),
-    ],
-    { name: "Mega flow", par: 6 },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
-      path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
-      path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
-      path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4]], {
-        color: "#db2777",
-        requiresClear: 3,
-      }),
-    ],
-    { name: "Royal gate", par: 7, walls: wall([1, 6], [8, 6], [4, 2], [5, 2]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 2], [1, 2], [2, 2], [2, 1], [2, 0], [1, 0]]),
-      path([[7, 2], [8, 2], [9, 2], [9, 1], [9, 0], [8, 0]], { color: "#2563eb" }),
-      path([[0, 7], [0, 8], [0, 9], [1, 9], [2, 9], [2, 8]], { color: "#059669" }),
-      path([[7, 7], [8, 7], [9, 7], [9, 8], [9, 9], [8, 9]], { color: "#d97706" }),
-      path([[4, 4], [4, 5], [5, 5], [5, 4]], { color: "#7c3aed", requiresClear: 1 }),
-    ],
-    { name: "Royal coil", par: 5, walls: wall([3, 4], [6, 5], [4, 6]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
-      path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
-      path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
-      path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-    ],
-    { name: "Sixfold", par: 6, walls: wall([4, 4], [5, 5]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
-      path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
-      path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
-      path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[4, 0], [4, 1], [4, 2], [4, 3], [4, 4], [4, 5]], {
-        color: "#db2777",
-        requiresClear: 2,
-      }),
-    ],
-    { name: "Penultimate", par: 7, walls: wall([5, 2], [5, 7]) },
-  ),
-  level(
-    10,
-    10,
-    [
-      path([[0, 0], [0, 1], [0, 2]]),
-      path([[0, 3], [0, 4], [0, 5]], { color: "#2563eb" }),
-      path([[9, 0], [9, 1], [9, 2]], { color: "#059669" }),
-      path([[9, 3], [9, 4], [9, 5]], { color: "#d97706" }),
-      path([[0, 7], [0, 8], [0, 9]], { color: "#7c3aed" }),
-      path([[9, 7], [9, 8], [9, 9]], { color: "#0ea5e9" }),
-      path([[2, 0], [2, 1], [2, 2], [2, 3], [2, 4], [2, 5], [2, 6], [2, 7], [2, 8], [2, 9]], {
-        color: "#db2777",
-        requiresClear: 3,
-      }),
-      path([[7, 0], [7, 1], [7, 2], [7, 3], [7, 4], [7, 5], [7, 6], [7, 7], [7, 8], [7, 9]], {
-        color: "#e11d48",
-        requiresClear: 4,
-      }),
-    ],
-    {
-      name: "Infinity",
-      par: 8,
-      walls: wall([1, 1], [1, 8], [8, 1], [8, 8], [4, 4], [5, 5]),
-    },
-  ),
+const NAMES = [
+  "Horizon", "Braid", "Coil", "Crosshair", "Stairwell",
+  "Rampart", "Outpost", "Split keep", "Channel", "Inner ring",
+  "Spine key", "Wide chain", "Outer keep", "Deep vault", "Citadel",
+  "Grand spiral", "Grand cross", "Grand hall", "Mega ring", "Mega flow",
+  "Royal gate", "Royal coil", "Sixfold", "Penultimate", "Infinity",
 ];
+
+/** 4–5 path curved puzzles only (proven hard + solvable) */
+const TEMPLATE_ORDER = [14, 19, 23, 22, 24];
+
+function clonePath(p: PathDef, dr: number, dc: number): PathDef {
+  return {
+    cells: p.cells.map((c) => ({ row: c.row + dr, col: c.col + dc })),
+    color: p.color,
+    requiresClear: p.requiresClear,
+  };
+}
+
+function buildAdvancedLevel(index: number, name: string): LevelDef {
+  const cycle = Math.floor(index / TEMPLATE_ORDER.length);
+  const tplIdx = TEMPLATE_ORDER[index % TEMPLATE_ORDER.length]!;
+  const tpl = HANDCRAFTED_LEVELS[tplIdx]!;
+  const pad = 1 + Math.floor(index / 4) + cycle;
+  const dr = Math.floor(pad / 2) + (cycle % 2);
+  const dc = Math.floor(pad / 2) + ((cycle + index) % 2);
+
+  const paths = tpl.paths.map((p) => clonePath(p, dr, dc));
+  const walls = (tpl.walls ?? []).map((w) => ({ row: w.row + dr, col: w.col + dc }));
+
+  return {
+    rows: tpl.rows + pad,
+    cols: tpl.cols + pad,
+    paths,
+    name,
+    par: paths.length,
+    walls: walls.length ? walls : undefined,
+  };
+}
+
+export const CURATED_ADVANCED: LevelDef[] = NAMES.map((name, i) => buildAdvancedLevel(i, name));

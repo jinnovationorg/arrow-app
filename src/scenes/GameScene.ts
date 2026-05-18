@@ -252,7 +252,7 @@ export class GameScene extends Phaser.Scene {
     this.levelText.setText(name);
     this.levelText.setPosition(width / 2, 40).setOrigin(0.5, 0);
 
-    const meta: string[] = [];
+    const meta: string[] = [`${this.level.paths.length} paths`];
     if (this.level.walls?.length) meta.push(`${this.level.walls.length} walls`);
     const locked = this.level.paths.filter((p) => (p.requiresClear ?? 0) > 0).length;
     if (locked) meta.push(`${locked} locked`);
