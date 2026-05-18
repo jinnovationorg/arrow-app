@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#f8fafc"/>
+  <!-- shaft -->
+  <rect x="96" y="232" width="220" height="48" fill="#1a1a1a"/>
+  <!-- head (wider than shaft) -->
+  <polygon points="316,208 416,256 316,304" fill="#1a1a1a"/>
+</svg>
